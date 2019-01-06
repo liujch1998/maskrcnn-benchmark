@@ -69,7 +69,7 @@ class PostProcessor(nn.Module):
         ):
             boxlist = self.prepare_boxlist(boxes_per_img, prob, image_shape)
             boxlist = boxlist.clip_to_image(remove_empty=False)
-            boxlist = self.filter_results(boxlist, num_classes)
+#            boxlist = self.filter_results(boxlist, num_classes)
             results.append(boxlist)
         return results
 

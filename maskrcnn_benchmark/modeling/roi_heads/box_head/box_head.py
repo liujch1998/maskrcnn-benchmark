@@ -47,9 +47,11 @@ class ROIBoxHead(torch.nn.Module):
         # final classifier that converts the features into predictions
         class_logits, box_regression = self.predictor(x)
 
+        box_regression = box_regression[:,:4]  # TODO: see if we should use this (_background), or avg of all regressed bboxes, or train our own bbox regressor
+
         if not self.training:
             result = self.post_processor((class_logits, box_regression), proposals)
-            return x, result, {}
+            return x, result, {}, box_regression
 
         loss_classifier, loss_box_reg = self.loss_evaluator(
             [class_logits], [box_regression]

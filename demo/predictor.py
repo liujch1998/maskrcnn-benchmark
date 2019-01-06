@@ -199,7 +199,10 @@ class COCODemo(object):
         image_list = image_list.to(self.device)
         # compute predictions
         with torch.no_grad():
-            predictions = self.model(image_list)
+            x, regressed_bboxes = self.model(image_list)
+        predictions = regressed_bboxes
+        print(x.size())
+        print(predictions)
         predictions = [o.to(self.cpu_device) for o in predictions]
 
         # always single image is passed at a time
