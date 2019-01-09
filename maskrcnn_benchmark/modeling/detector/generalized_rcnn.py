@@ -12,7 +12,6 @@ from ..backbone import build_backbone
 from ..rpn.rpn import build_rpn
 from ..roi_heads.roi_heads import build_roi_heads
 
-from maskrcnn_benchmark.modeling.box_coder import BoxCoder
 
 class GeneralizedRCNN(nn.Module):
     """
@@ -49,19 +48,8 @@ class GeneralizedRCNN(nn.Module):
         images = to_image_list(images)
         features = self.backbone(images.tensors)
         proposals, proposal_losses = self.rpn(images, features, targets)
-        print(proposals)
         if self.roi_heads:
-            x, result, detector_losses, box_regression = self.roi_heads(features, proposals, targets)
-            '''
-            # the next lines are taken from modeling.roi_heads.box_head.inference
-            box_coder = BoxCoder(weights=(10., 10., 5., 5.))
-            boxes_per_image = [len(box) for box in proposals]
-            concat_boxes = torch.cat([a.bbox for a in proposals], dim=0)
-            regressed_bboxes = box_coder.decode(
-                box_regression.view(sum(boxes_per_image), -1), concat_boxes
-            )
-            return x, regressed_bboxes
-            '''
+            x, result, detector_losses = self.roi_heads(features, proposals, targets)
             return x, result
         else:
             # RPN-only models don't have roi_heads
