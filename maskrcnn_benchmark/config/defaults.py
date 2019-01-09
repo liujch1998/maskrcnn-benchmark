@@ -23,7 +23,7 @@ _C = CN()
 _C.MODEL = CN()
 _C.MODEL.RPN_ONLY = False
 _C.MODEL.MASK_ON = False
-_C.MODEL.DEVICE = "cuda"
+_C.MODEL.DEVICE = "cpu"
 _C.MODEL.META_ARCHITECTURE = "GeneralizedRCNN"
 
 # If the WEIGHT starts with a catalog://, like :R-50, the code will look for

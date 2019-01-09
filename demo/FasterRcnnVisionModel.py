@@ -7,11 +7,11 @@ from predictor import COCODemo
 class FasterRcnnVisionModel (nn.Module):
 
     def __init__ (self):
-        super(FasterRcnnBackbone, self).__init__()
+        super(FasterRcnnVisionModel, self).__init__()
 
-        config_file = '../configs/caffe2/e2e_faster_rcnn_R_50_FPN_1x_caffe2.yaml'
+        config_file = '/home/jl25/research/maskrcnn-benchmark/configs/caffe2/e2e_faster_rcnn_R_50_FPN_1x_caffe2.yaml'
         cfg.merge_from_file(config_file)
-        coco_demo = COCODemo(cfg)
+        self.coco_demo = COCODemo(cfg)
 
     def forward (self, image):
         '''
@@ -21,7 +21,7 @@ class FasterRcnnVisionModel (nn.Module):
         < image_feats (1, d_image_feats)
         '''
 
-        bbox_feats, bboxes_reg = coco_demo.compute_prediction(image)
+        bbox_feats, bboxes_reg = self.coco_demo.compute_prediction(image)
         region_visual_feats = list(bbox_feats.cpu().chunk(bbox_feats.size(0), dim=0))
         bboxes = bboxes_reg.bbox.tolist()
         image_feats = torch.tensor([])
