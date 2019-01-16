@@ -199,9 +199,10 @@ class COCODemo(object):
         image_list = image_list.to(self.device)
         # compute predictions
         with torch.no_grad():
-            x, predictions = self.model(image_list)
+            x, predictions, objectness = self.model(image_list)
             # x (1000, 1024)
             # predictions [BoxList(1000)] 'regressed bboxes'
+            # objectness (1000)
         predictions = [o.to(self.cpu_device) for o in predictions]
 
         # always single image is passed at a time
@@ -218,7 +219,7 @@ class COCODemo(object):
             # always single image is passed at a time
             masks = self.masker([masks], [prediction])[0]
             prediction.add_field("mask", masks)
-        return x, prediction
+        return x, prediction, objectness
 
     def select_top_predictions(self, predictions):
         """
