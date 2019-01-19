@@ -48,6 +48,8 @@ class GeneralizedRCNN(nn.Module):
         images = to_image_list(images)
         features = self.backbone(images.tensors)
         proposals, proposal_losses = self.rpn(images, features, targets)
+        context_bbox = torch.tensor([[0.0, 0.0, proposals[0].bbox[:,2].max(), proposals[0].bbox[:,3].max()]])
+        proposals[0].bbox = torch.cat((proposals[0].bbox, context_bbox), dim=0)
         objectness = proposals[0].get_field('objectness')
         if self.roi_heads:
             x, result, detector_losses = self.roi_heads(features, proposals, targets)

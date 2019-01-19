@@ -23,8 +23,9 @@ class FasterRcnnVisionModel (nn.Module):
         '''
 
         bbox_feats, bboxes_reg, objectness = self.coco_demo.compute_prediction(image)
-        bboxes = bboxes_reg.bbox.tolist()
-        regions_visual_feats = list(bbox_feats.cpu().chunk(bbox_feats.size(0), dim=0))
+        bboxes = bboxes_reg.bbox.tolist()[:-1]
+        bboxes_feats = list(bbox_feats.cpu().chunk(bbox_feats.size(0), dim=0))
+        regions_visual_feats = bboxes_feats[:-1]
+        image_feats = bbox_feats[-1,:].unsqueeze(0).cpu().clone().detach()
         objectnesses = objectness.tolist()
-        image_feats = torch.tensor([])
         return bboxes, regions_visual_feats, objectnesses, image_feats
